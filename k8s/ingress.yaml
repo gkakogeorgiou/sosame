@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sosame-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-body-size: "999m"
+spec:
+  rules:
+    - host: sosame.ddns.net
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service: 
+                name: sosame-web-service
+                port:
+                  number: 9000
+  tls:
+  - hosts:
+    - sosame.ddns.net
+    secretName: sosame-dev-tls
+    

@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configMapGenerator:
+- name: sosame-web-config
+  files:
+  - uwsgi.ini=files/uwsgi.ini
+  
+generatorOptions:
+  disableNameSuffixHash: true
+
+resources:
+- server.yaml
+- service.yaml
+- ingress.yaml

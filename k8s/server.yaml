@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sosame-web-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sosame-web
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: sosame-web
+    spec:
+      serviceAccountName: sosame-account
+      containers:
+      - name: sosame-web-app
+        image: gkako/sosame:v1
+        imagePullPolicy: Always
+        args: ["--ini=/conf/uwsgi/uwsgi.ini", "--catch-exceptions"]
+        # command: ['/bin/bash', "-c", "--"]
+        # args: [ "while true; do sleep 30; done;" ]
+        volumeMounts:
+        - name: sosame-uwsgi-config
+          mountPath: /conf/uwsgi
+        ports:
+        - containerPort: 9000
+        resources: {}
+
+      volumes:
+      - name: sosame-uwsgi-config
+        configMap:
+          name: sosame-web-config
+          items:
+          - key: uwsgi.ini
+            path: uwsgi.ini
+      restartPolicy: Always
+      imagePullSecrets:
+      - name: sosameregcred
